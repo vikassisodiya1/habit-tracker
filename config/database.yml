@@ -1,0 +1,21 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: 5
+  username: <%= ENV.fetch("POSTGRES_USER", "postgres") %>
+  password: <%= ENV.fetch("POSTGRES_PASSWORD", "password") %>
+  host: <%= ENV.fetch("POSTGRES_HOST", "localhost") %>
+
+development:
+  <<: *default
+  database: habit_tracker_development
+
+test:
+  <<: *default
+  database: habit_tracker_test
+
+production:
+  <<: *default
+  database: habit_tracker_production
+  username: habit_tracker
+  password: <%= ENV["HABIT_TRACKER_DATABASE_PASSWORD"] %>
