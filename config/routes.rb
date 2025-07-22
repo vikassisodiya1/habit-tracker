@@ -4,5 +4,9 @@ Rails.application.routes.draw do
       registrations: "users/registrations",
       sessions: "users/sessions"
     }
-  root "home#index"
+  root "habits#index"
+  resources :habits do
+    post "checkin", on: :member
+    resources :habit_checkins, only: [ :create ]
+  end
 end
