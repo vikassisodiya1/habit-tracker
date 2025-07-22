@@ -1,0 +1,33 @@
+<h2 class="text-2xl font-bold mb-4">My Habits</h2>
+
+<%= link_to "New Habit", new_habit_path, class: "bg-blue-600 text-white px-4 py-2 rounded" %>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+  <% @habits.each do |habit| %>
+    <div class="bg-white rounded shadow-md p-4">
+      <h3 class="text-xl font-semibold text-gray-800"><%= habit.name %></h3>
+      <p class="text-gray-600 mb-2"><%= habit.description %></p>
+
+      <!-- Tailwind badges -->
+      <%= render "badges", habit: habit %>
+
+      <!-- Mini calendar -->
+      <div class="grid grid-cols-7 gap-1">
+        <% start_date = habit.created_at.to_date %>
+        <% today = Date.today %>
+        <% (start_date..today).each do |date| %>
+          <% checked_in = habit.habit_checkins.exists?(date: date) %>
+          <%= form_with url: habit_habit_checkins_path(habit), method: :post, data: { turbo_frame: "_top" } do %>
+            <%= hidden_field_tag :date, date %>
+            <button class="text-xs w-full px-1 py-1 rounded
+              <%= checked_in ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-700' %>">
+              <%= date.day %>
+            </button>
+          <% end %>
+        <% end %>
+      </div>
+
+      <%= link_to "Details", habit_path(habit), class: "text-blue-500 text-sm mt-2 inline-block" %>
+    </div>
+  <% end %>
+</div>
