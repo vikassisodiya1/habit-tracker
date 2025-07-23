@@ -30,7 +30,7 @@ Users can:
 ### 1. Clone the repo
 
 ```bash
-git clone https://github.com/your-username/habit-tracker.git
+git clone https://github.com/vikassisodiya1/habit-tracker.git
 cd habit-tracker
 ```
 
