@@ -1,4 +1,11 @@
 Rails.application.routes.draw do
+  require "sidekiq/web"
+  mount Sidekiq::Web => "/sidekiq" if Rails.env.development?
+
+  if Rails.env.development?
+    mount LetterOpenerWeb::Engine, at: "/letter_opener"
+  end
+
   devise_for :users,
     controllers: {
       registrations: "users/registrations"
@@ -8,6 +15,4 @@ Rails.application.routes.draw do
     post "checkin", on: :member
     resources :habit_checkins, only: [ :create ]
   end
-
-  get "/habit_checkins/:id/calendar", to: "habit_checkins#show_calendar", as: :habit_calendar
 end

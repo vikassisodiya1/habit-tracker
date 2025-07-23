@@ -13,9 +13,9 @@ class Habit < ApplicationRecord
     today = Date.current
 
     checkin_dates.each do |date|
-      if date == today || date == today - 1
+      if date == today # || date == today - 1
         streak += 1
-        today = date
+        # today = date
         today -= 1
       else
         break

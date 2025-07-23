@@ -6,74 +6,40 @@
   <p class="text-gray-500 block">You haven't created any habits yet.</p>
 <% end %>
 
-<div class="grid grid-cols-4 gap-4 p-4 sm:grid-cols-1 lg:grid-cols-4 ">
+<div class="grid xs:grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
+
   <% @habits.each do |habit| %>
     <div class="bg-white rounded-lg shadow-md p-5 flex flex-col justify-between hover:bg-gray-300 transition">
-      <h3 class="text-xl font-semibold text-gray-800 mb-2"><%= habit.name %></h3>
-      <p class="text-gray-600 mb-4"><%= habit.description %></p>
-
-      <div class="flex flex-wrap gap-2 mb-4">
-        <%= render "badges", habit: habit %>
+      <h3 class="text-xl font-semibold text-gray-800"><%= habit.name %></h3>
+      <div class="text-gray-600 mb-1 text-sm leading-relaxed max-h-40 overflow-y-auto p-2 bg-gray-50 rounded">
+        <%= habit.description %>
       </div>
+    <div class="flex flex-col gap-4">
 
-      <% current_month = params[:month] ? Date.parse(params[:month]) : Date.today.beginning_of_month %>
-      <% start_wday = current_month.beginning_of_month.wday %>
-      <% end_of_month = current_month.end_of_month %>
-      <% total_days = ((start_wday + end_of_month.day).to_f / 7).ceil * 7 %>
+      <%= turbo_frame_tag "habit_#{habit.id}_badges" do %>
+        <div class="flex flex-wrap gap-2">
+          <%= render "badges", habit: habit %>
+        </div>
+      <% end %>
 
-      <div class="mb-4 flex justify-between items-center">
-        <% prev_month = current_month.prev_month.beginning_of_month %>
-        <% next_month = current_month.next_month.beginning_of_month %>
+      <%= turbo_frame_tag "calendar_#{habit.id}" do %>
+        <%= render "calendar", habit: habit, current_month: Date.today.beginning_of_month %>
+      <% end %>
+    </div>
 
-        <%= link_to "←", habit_path(habit, month: prev_month), class: "text-sm px-2 py-1 bg-gray-200 rounded hover:bg-gray-300" %>
-        <h3 class="text-sm font-semibold"><%= current_month.strftime("%B %Y") %></h3>
-        <%= link_to "→", habit_path(habit, month: next_month), class: "text-sm px-2 py-1 bg-gray-200 rounded hover:bg-gray-300" %>
-      </div>
-
-      <div class="grid grid-cols-7 gap-1 text-center text-xs font-semibold text-gray-600 mb-1">
-        <% %w[Sun Mon Tue Wed Thu Fri Sat].each do |day_name| %>
-          <div><%= day_name %></div>
-        <% end %>
-      </div>
-
-      <div class="grid grid-cols-7 gap-1 text-center text-xs">
-        <% total_days.times do |i| %>
-          <% day = i - start_wday + 1 %>
-          <% if day < 1 || day > end_of_month.day %>
-            <div class="p-1"></div>
-          <% else %>
-            <% date = current_month + (day - 1).days %>
-            <% checked_in = habit.habit_checkins.exists?(date: date) %>
-            <% can_checkin = date >= habit.created_at.to_date && date <= Date.today %>
-
-            <% if can_checkin %>
-              <%= form_with url: habit_habit_checkins_path(habit), method: :post, data: { turbo_frame: "_top" } do %>
-                <%= hidden_field_tag :date, date %>
-                    <button class="w-full p-1 rounded text-xs font-medium transition
-                      <%= checked_in ? 'bg-green-500 text-white hover:bg-green-600' : 'bg-red-300 text-white hover:bg-red-400' %>">
-                  <%= day %>
-                </button>
-              <% end %>
-            <% else %>
-              <div class="p-1 text-gray-400 bg-gray-100 rounded cursor-not-allowed"><%= day %></div>
-            <% end %>
-          <% end %>
-        <% end %>
-      </div>
 
       <div class="flex flex-wrap gap-2 mt-4 pt-2 border-t border-gray-200">
-        <%= button_to "Check-in", checkin_habit_path(habit), method: :post, data: { turbo_frame: "_top" },
-            class: "bg-green-500 text-white px-3 py-1 rounded text-sm hover:bg-green-600" %>
+        <%= form_with url: habit_habit_checkins_path(habit), method: :post, data: { turbo_stream: true } do %>
+          <%= hidden_field_tag :date, Date.today %>
+          <%= hidden_field_tag :month, Date.today.beginning_of_month %>
+          <%= submit_tag "Done", class: "bg-green-500 text-white px-3 py-1 rounded text-sm hover:bg-green-600" %>
+        <% end %>
 
         <%= link_to "Edit", edit_habit_path(habit),
             class: "bg-yellow-400 text-black px-3 py-1 rounded text-sm hover:bg-yellow-500" %>
 
         <%= button_to "Delete", habit_path(habit), method: :delete, data: { confirm: "Are you sure?" },
             class: "bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600" %>
-
-        <%= link_to "Details", habit_path(habit),
-            class: "text-blue-600 underline text-sm ml-auto pr-2 pt-1" %>
-
       </div>
     </div>
   <% end %>

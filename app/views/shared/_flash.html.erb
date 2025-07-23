@@ -1,0 +1,21 @@
+<% if flash[:notice] %>
+  <div
+    x-data="{ show: true }"
+    x-init="setTimeout(() => show = false, 3000)"
+    x-show="show"
+    x-transition
+    class="bg-green-100 text-green-700 p-3 rounded shadow text-center"
+  >
+    <%= flash[:notice] %>
+  </div>
+<% elsif flash[:alert] %>
+  <div
+    x-data="{ show: true }"
+    x-init="setTimeout(() => show = false, 3000)"
+    x-show="show"
+    x-transition
+    class="bg-red-100 text-red-700 p-3 rounded shadow text-center"
+  >
+    <%= flash[:alert] %>
+  </div>
+<% end %>

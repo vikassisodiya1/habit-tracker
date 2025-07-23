@@ -1,17 +1,47 @@
-<turbo-frame id="calendar_<%= @habit.id %>">
-  <h3 class="mt-4 font-semibold">Check-in Calendar</h3>
-  <div class="grid grid-cols-7 gap-2 mt-2">
-    <% start_date = @habit.created_at.to_date %>
-    <% today = Date.today %>
-    <% (start_date..today).each do |date| %>
-      <% checked_in = @habit.habit_checkins.exists?(date: date) %>
-      <%= form_with url: habit_habit_checkins_path(@habit), method: :post do %>
-        <%= hidden_field_tag :date, date %>
-        <button class="text-sm px-2 py-1 rounded w-full
-          <%= checked_in ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-700' %>">
-          <%= date.strftime("%d") %>
-        </button>
+<%= turbo_frame_tag "calendar_#{habit.id}" do %>
+  <% current_month = params[:month] ? Date.parse(params[:month]) : Date.today.beginning_of_month %>
+  <% start_wday = current_month.beginning_of_month.wday %>
+  <% end_of_month = current_month.end_of_month %>
+  <% total_days = ((start_wday + end_of_month.day).to_f / 7).ceil * 7 %>
+
+  <div class="mb-4 flex justify-between items-center">
+    <% prev_month = current_month.prev_month.beginning_of_month %>
+    <% next_month = current_month.next_month.beginning_of_month %>
+
+    <%= link_to "←", root_path(month: prev_month, habit_id: habit.id), data: { turbo_frame: "calendar_#{habit.id}" }, class: "text-sm px-2 py-1 bg-gray-200 rounded hover:bg-gray-300" %>
+    <h3 class="text-sm font-semibold"><%= current_month.strftime("%B %Y") %></h3>
+    <%= link_to "→", root_path(month: next_month, habit_id: habit.id), data: { turbo_frame: "calendar_#{habit.id}" }, class: "text-sm px-2 py-1 bg-gray-200 rounded hover:bg-gray-300" %>
+  </div>
+
+  <div class="grid grid-cols-7 gap-1 text-center text-xs font-semibold text-gray-600 mb-1">
+    <% %w[Sun Mon Tue Wed Thu Fri Sat].each do |day_name| %>
+      <div><%= day_name %></div>
+    <% end %>
+  </div>
+
+<div class="grid grid-cols-7 gap-1 text-center text-xs min-h-[10rem] h-[10rem]">
+    <% total_days.times do |i| %>
+      <% day = i - start_wday + 1 %>
+      <% if day < 1 || day > end_of_month.day %>
+        <div class="p-1"></div>
+      <% else %>
+        <% date = current_month + (day - 1).days %>
+        <% checked_in = habit.habit_checkins.exists?(date: date) %>
+        <% can_checkin = date >= habit.created_at.to_date && date <= Date.today %>
+
+        <% if can_checkin %>
+          <%= form_with url: habit_habit_checkins_path(habit), method: :post do %>
+            <%= hidden_field_tag :date, date %>
+            <%= hidden_field_tag :month, current_month.to_s %>
+            <button class="w-full p-1 rounded text-xs font-medium transition
+              <%= checked_in ? 'bg-green-500 text-white hover:bg-green-600' : 'bg-red-300 text-white hover:bg-red-400' %>">
+              <%= day %>
+            </button>
+          <% end %>
+        <% else %>
+          <div class="p-1 text-gray-400 bg-gray-100 rounded cursor-not-allowed"><%= day %></div>
+        <% end %>
       <% end %>
     <% end %>
   </div>
-</turbo-frame>
+<% end %>
