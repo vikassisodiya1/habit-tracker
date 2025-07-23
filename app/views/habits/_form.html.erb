@@ -1,32 +1,24 @@
-<%= form_with(model: habit) do |form| %>
-  <% if habit.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(habit.errors.count, "error") %> prohibited this habit from being saved:</h2>
+<%= form_with(model: habit, local: false, html: { class: "max-w-sm mx-auto" }) do |f| %>
+  <div class="mb-5">
+    <%= f.label :name, "Habit Name", class: "block mb-2 text-sm font-medium text-gray-900" %>
+    <%= f.text_field :name, placeholder: "e.g., Drink Water", required: true,
+          class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+  </div>
 
-      <ul>
-        <% habit.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
+  <div class="mb-5">
+    <%= f.label :description, "Description", class: "block mb-2 text-sm font-medium text-gray-900" %>
+    <%= f.text_area :description, placeholder: "Optional habit description",
+          class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+  </div>
+
+  <div class="flex items-start mb-5">
+    <div class="flex items-center h-5">
+      <input id="daily" type="checkbox" class="w-4 h-4 border border-gray-300 rounded-sm bg-gray-50 focus:ring-3 focus:ring-blue-300" />
     </div>
-  <% end %>
-
-  <div>
-    <%= form.label :name, style: "display: block" %>
-    <%= form.text_field :name %>
+    <label for="daily" class="ms-2 text-sm font-medium text-gray-900">Daily Habit?</label>
   </div>
 
-  <div>
-    <%= form.label :description, style: "display: block" %>
-    <%= form.text_field :description %>
-  </div>
-
- <!-- <div>
-    <%= form.label :user_id, style: "display: block" %>
-    <%= form.text_field :user_id %>
-  </div>--->
-
-  <div>
-    <%= form.submit %>
-  </div>
+  <%= f.submit "Create Habit",
+        class: "text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300
+                font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center" %>
 <% end %>
