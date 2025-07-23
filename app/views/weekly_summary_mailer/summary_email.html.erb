@@ -1,0 +1,11 @@
+<h2>Hello <%= @user.first_name %>,</h2>
+<p>Here’s your weekly habit summary:</p>
+
+<ul>
+  <% @habits.each do |habit| %>
+    <li>
+      <strong><%= habit.name %></strong>: 
+      <%= habit.habit_checkins.where(date: 1.week.ago..Date.today).count %> check-ins this week.
+    </li>
+  <% end %>
+</ul>

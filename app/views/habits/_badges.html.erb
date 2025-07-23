@@ -1,6 +1,9 @@
-<div class="flex flex-wrap gap-2 text-xs mt-3 mb-2">
+<%= turbo_frame_tag "habit_#{habit.id}_badges" do %>
+
+<div class="flex flex-wrap gap-2 text-xs mt-3 mb-4">
   <%= badge(label: "Streak: #{habit.current_streak}", color: "green", icon: "🔥") %>
   <%= badge(label: "Longest: #{habit.longest_streak}", color: "blue", icon: "🏆") %>
   <%= badge(label: "Consistency: #{habit.consistency_percentage}%", color: "yellow", icon: "📊") %>
   <%= badge(label: "Check-ins: #{habit.habit_checkins.count}", color: "purple", icon: "✅") %>
 </div>
+<% end %>
