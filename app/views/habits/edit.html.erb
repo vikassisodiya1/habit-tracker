@@ -1,12 +1,14 @@
-<% content_for :title, "Editing habit" %>
+<% content_for :title, "Editing Habit" %>
+<div class="min-h-screen flex items-center justify-center bg-gray-100">
+  <div class="bg-white p-6 rounded-lg shadow max-w-lg w-full">
+    <h1 class="text-2xl font-bold mb-6 text-gray-800 text-center">Editing Habit</h1>
 
-<h1>Editing habit</h1>
+    <%= render "form", habit: @habit %>
 
-<%= render "form", habit: @habit %>
-
-<br>
-
-<div>
-  <%= link_to "Show this habit", @habit %> |
-  <%= link_to "Back to habits", habits_path %>
+     <div class="mt-4 text-center">
+      <%= link_to "Show this habit", @habit, class: "inline-block text-blue-600 hover:underline text-sm" %> |
+      <%= link_to "← Back to habits", habits_path,
+          class: "inline-block text-blue-600 hover:underline text-sm" %>
+    </div>
+  </div>
 </div>

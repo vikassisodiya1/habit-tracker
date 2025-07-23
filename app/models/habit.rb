@@ -2,20 +2,26 @@ class Habit < ApplicationRecord
   belongs_to :user
   has_many :habit_checkins, dependent: :destroy
 
-  validates :name, presence: true
-
+  validates :name, presence: true, uniqueness: { scope: :user_id }, length: { maximum: 100 }
 
 
   def current_streak
-    dates = habit_checkins.order(date: :desc).pluck(:date)
-    streak = 0
-    day = Date.today
+    checkin_dates = habit_checkins.order(date: :desc).pluck(:date)
+    return 0 if checkin_dates.empty?
 
-    dates.each do |d|
-      break unless d == day
-      streak += 1
-      day -= 1
+    streak = 0
+    today = Date.current
+
+    checkin_dates.each do |date|
+      if date == today || date == today - 1
+        streak += 1
+        today = date
+        today -= 1
+      else
+        break
+      end
     end
+
     streak
   end
 

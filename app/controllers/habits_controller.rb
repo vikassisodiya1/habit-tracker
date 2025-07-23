@@ -5,6 +5,7 @@ class HabitsController < ApplicationController
   # GET /habits or /habits.json
   def index
     @habits = current_user.habits.includes(:habit_checkins)
+    @month = params[:month] ? Date.parse(params[:month]) : Date.today.beginning_of_month
   end
 
   # GET /habits/1 or /habits/1.json
