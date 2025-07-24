@@ -2,6 +2,12 @@
 
 A modern habit tracking app built with **Ruby on Rails**, **Hotwire**, and **Tailwind CSS**.
 
+> ✅ **Rails Version**: `7.2.2.1`  
+> ✅ **Ruby Version**: `3.1.0p0`  
+> ✅ **Yarn Version**: `4.9.2`
+
+---
+
 Users can:
 
 - Create, edit, and delete habits
@@ -57,12 +63,4 @@ redis-server
 
 ```bash
 bin/dev
-# or manually
-rails server
-```
-
-### 6. Start Sidekiq (for background jobs)
-
-```bash
-bundle exec sidekiq
 ```
